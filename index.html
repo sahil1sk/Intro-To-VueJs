@@ -1,0 +1,41 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learning Vue</title>
+    <script src="https://unpkg.com/vue@3.0.2"></script> <!--for using vue js as cdn-->
+</head>
+<body>
+    <h1>Hello Vue :)</h1>
+    
+    <div id="app">
+        <div v-if="showBooks">
+            <p>{{ title }} - {{ author }} - {{ age }}</p>    
+        </div>
+
+        <button @click="toogleShowBooks">
+            <span v-if="showBooks">Hide Books</span>
+            <span v-else>Show Books</span>
+        </button>
+
+        <!-- v-show different from v-if // v-if completely remove the box but v-show will set display none when set false
+            v-show // like use to show data when some condition is true
+        -->
+        <div v-show="showBooks">Currently showing books</div>
+
+        </br>
+        <p>{{ title }} - {{ author }} - {{ age }}</p>
+
+        <!--v-on means on click or on mouse something like that-->
+        <button v-on:click="age++">Increase the age</button>
+        <button v-on:click="age--">Decrease the age</button>
+        <!-- @ is just short form of v-on-->
+        <div @click="title = 'something else'">Change book title</div>
+
+        <!-- calling method inside app.js file-->
+        <div @click="changeTitle('Oauthinger')">Change title</div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
