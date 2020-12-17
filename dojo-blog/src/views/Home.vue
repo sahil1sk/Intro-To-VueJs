@@ -19,10 +19,11 @@
   <div v-for="name in matchingNames" :key="name">
     {{ name }}
   </div>
+  <button @click="handleClick">StopWatching</button>
 </template>
 
 <script>
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive, computed, watch, watchEffect } from 'vue'
 
 export default {
   name: 'Home',
@@ -56,14 +57,35 @@ export default {
     const search = ref('')
     const names = ref(['mario', 'yoshi', 'luigi', 'toad', 'bowser'])
 
+    // Diff b/w watch and watchEffect is watch will help to watch the 
+    // value you specified and watchEffect will run on every value inside it which changes
+
+    // watch will call function if every time search value is changes
+    const stopwatch = watch(search, () => {
+      console.log('watch function run');
+    })
+
+    // watch effect funtion run initial when component mount first
+    // after that it will run if any value inside this will changes
+    const stopEffect = watchEffect(() => {
+      console.log('watch Effect function run', search.value);
+    })
+
     const matchingNames = computed(() => {
       return names.value.filter((name) => name.includes(search.value))
     })
 
+    const handleClick = () => {
+      stopwatch()
+      stopEffect()
+    }
+
     return {
       // name: name
       // name, age, handleClick
-      ninjaOne, updateNinjaOne, ninjaTwo, updateNinjaTwo, names, search, matchingNames
+      ninjaOne, updateNinjaOne, ninjaTwo, 
+      updateNinjaTwo, names, search, 
+      matchingNames, handleClick
     }
   },
   data(){
