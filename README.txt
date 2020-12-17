@@ -2,4 +2,5 @@
 2 modal-project ( Working with CLI more componenets, Teleporting)
 3 reaction-timer ( Making Small project using lifeCycle methods)
 4 web-form ( Using forms & validation )
-5 ninja-jobs (Using Routing)
+5 ninja-jobs (Using Routing & Fetching Data)
+6 dojo-blog (Composition API's)
