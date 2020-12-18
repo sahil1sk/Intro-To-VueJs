@@ -1,97 +1,32 @@
 <template>
   <div class="home">
-    home
-    <!-- <p>My name is {{ name }} and my age is {{ age }}</p>
-    <button @click="handleClick">click me</button>
-    <button @click="age++">Inc age</button>
-    <input type="text" v-model="name"> -->
-    <h2>Refs</h2>
-    <p>{{ ninjaOne.name }} - {{ ninjaOne.age }}</p>
-    <button @click="updateNinjaOne">Update</button>
-    <h2>Reactive</h2>
-    <p>{{ ninjaTwo.name }} - {{ ninjaTwo.age }}</p>
-    <button @click="updateNinjaTwo">Update</button>
+    <h1>Home</h1>
+    <div v-if="error">{{ error }}</div>
+    <div v-if="posts.length">
+      <PostList v-if="showPosts" :posts="posts"/>
+      <button @click="showPosts = !showPosts">toggle posts</button>
+      <button @click="posts.pop()">delete a post</button>
+    </div>
+    <div v-else>
+      Loading...
+    </div>
   </div>
-
-  <h2>Computed</h2>
-  <input type="text" v-model="search">
-  <p>search term - {{ search }}</p>
-  <div v-for="name in matchingNames" :key="name">
-    {{ name }}
-  </div>
-  <button @click="handleClick">StopWatching</button>
 </template>
 
 <script>
-import { ref, reactive, computed, watch, watchEffect } from 'vue'
+import PostList from '../components/PostList.vue'
+import getPosts from '../composables/getPosts'
+import { ref } from 'vue'
 
 export default {
   name: 'Home',
+  components: { PostList },
   setup() {
-    //const p = ref(null) // In this way we creat ref inside composition api
+    const showPosts = ref(true);
+    const { posts, error, load } = getPosts()
+    load()
 
-    // const name = ref('mario')
-    // const age = ref(30)
-
-    // const handleClick = () => {
-    //   //p.value.textContent = 'Hello, ninjas'
-    //   // name.value = 'luigi'
-    //   // age.value = '35'
-    // }
-
-    const ninjaOne = ref({name: 'mario', age: 30})
-    const ninjaTwo = reactive({ name: 'luigi', age: 35 })
-
-    const nameTwo = reactive('mario') // this is permitive 
-
-    const updateNinjaOne = () => {
-      ninjaOne.value.age = 40
-    }
-
-    const updateNinjaTwo = () => {
-      ninjaTwo.age = 40
-      //nameTwo = 'New' // this cannot work in reactive becasue of permitive type so use ref is better
-    }
-
-    // => Computed in composition api
-    const search = ref('')
-    const names = ref(['mario', 'yoshi', 'luigi', 'toad', 'bowser'])
-
-    // Diff b/w watch and watchEffect is watch will help to watch the 
-    // value you specified and watchEffect will run on every value inside it which changes
-
-    // watch will call function if every time search value is changes
-    const stopwatch = watch(search, () => {
-      console.log('watch function run');
-    })
-
-    // watch effect funtion run initial when component mount first
-    // after that it will run if any value inside this will changes
-    const stopEffect = watchEffect(() => {
-      console.log('watch Effect function run', search.value);
-    })
-
-    const matchingNames = computed(() => {
-      return names.value.filter((name) => name.includes(search.value))
-    })
-
-    const handleClick = () => {
-      stopwatch()
-      stopEffect()
-    }
-
-    return {
-      // name: name
-      // name, age, handleClick
-      ninjaOne, updateNinjaOne, ninjaTwo, 
-      updateNinjaTwo, names, search, 
-      matchingNames, handleClick
-    }
-  },
-  data(){
-    // the value return data is reactive means when it changes then changes on template
-    // but the value return from template is not reactive
-    return {}
+    return { posts, showPosts, error }
   }
 }
 </script>
