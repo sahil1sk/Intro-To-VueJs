@@ -10,7 +10,10 @@ var firebaseConfig = {
   appId: '1:11687720573:web:28989f8cc38cdfa0b36314'
 }
 
+
 const firebaseApp = firebase.initializeApp(firebaseConfig)
+firebaseApp.firestore().settings({ timestampsInSnapshots: true })
+//firebase.analytics();
 // const messaging = firebase.messaging()
 
 // export {

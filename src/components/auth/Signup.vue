@@ -14,6 +14,7 @@
                 <label for="alias">Alias:</label>
                 <input type="text" name="alias" v-model="alias">
             </div>
+            <p class="red-text center" v-if="feedback">{{ feedback }}</p>
             <div class="field center">
                 <button class="btn deep-purple">Signup</button>
             </div>
@@ -22,6 +23,10 @@
 </template>
 
 <script>
+import slugify from 'slugify' // npm install slugify --save
+import db from '../../firebase/init'
+import firebase from 'firebase'
+
 export default {
     name: 'Signup',
     data() {
@@ -29,11 +34,44 @@ export default {
             email: null,            
             password: null,            
             alias: null,            
+            feedback: null,
+            slug: null
         }
     },
     methods: {
         signup() {
-            console.log(this.email);
+            if(this.alias && this.email && this.password) {
+                this.slug = slugify(this.alias, {
+                    replacement: '-', // when ever there is space it replace that with -
+                    remove: '/[$*_+~.()!\-:@]/g', // so here we remove this letter g means from the whole slug
+                    lower: true,
+                })
+                let ref = db.collection('users').doc(this.slug)
+                ref.get().then(doc => {
+                    if(doc.exists) {
+                        this.feedback = "This alias already exists"
+                    } else {
+                        firebase.auth().createUserWithEmailAndPassword(this.email, this.password)
+                        .then(cred => {
+                            console.log(cred.user);
+                            ref.set({
+                                alias: this.alias,
+                                geolocation: null,
+                                user_id: cred.user.uid
+                            }).then(() => {
+                                this.$router.push({ name: 'Home'})
+                            })               
+                        })
+                        .catch(err => {
+                            console.log(err)
+                            this.feedback = err.message
+                        })
+                    }
+                })
+
+            } else {
+                this.feedback = "You must enter all fields"
+            }
         }
     }
 }
